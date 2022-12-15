@@ -6,29 +6,55 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 )
 
-func LoadRecords(fn string) ([]string, error) {
-	records := make([]string, 0)
+type Span struct {
+	Start, Stop int
+}
+
+func (s Span) Overlap(other Span) bool {
+	if s.Stop < other.Stop && other.Start < s.Stop {
+		return true
+	}
+	return false
+}
+
+func NewSpan(raw string) Span {
+	var s Span
+	split := strings.Split(raw, "-")
+	start, _ := strconv.ParseInt(split[0], 10, 64)
+	s.Start = int(start)
+	stop, _ := strconv.ParseInt(split[1], 10, 64)
+	s.Stop = int(stop)
+
+	return s
+}
+
+func LoadRecords(fn string) ([][2]Span, error) {
+	records := make([][2]Span, 0)
 	f, err := os.Open(fn)
 	if err != nil {
 		return records, fmt.Errorf("error opening inventory source file: %w", err)
 	}
-	/*
-		 var s scanner.Scanner
-		 s.Init(f)
-		s := scanner.NewScanner(f)
-		 s.Whitespace = 1 << '\n'
-		for tok := s.Scan(); tok != scanner.EOF; tok = s.Scan() {
-			records = append(records, s.TokenText())
-			// fmt.Printf("%s: %s\n", s.Position, s.TokenText())
-		}
-	*/
 	s := bufio.NewScanner(f)
 	for s.Scan() {
-		records = append(records, s.Text())
+		var pair [2]Span
+		split := strings.Split(s.Text(), ",")
+		pair[0] = NewSpan(split[0])
+		pair[1] = NewSpan(split[1])
+		records = append(records, pair)
 	}
 	return records, nil
+}
+
+func Part1(records [][2]Span) {
+	// sum := 0
+	//for _, r := range records {
+	//}
+	log.Printf("%#+v\n", records)
+
 }
 
 func main() {
@@ -43,6 +69,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("error loading records: %s\n", err)
 	}
-	log.Printf("%#+v\n", records)
+	Part1(records)
 
 }
