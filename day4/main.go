@@ -52,7 +52,7 @@ func LoadRecords(fn string) ([][2]Span, error) {
 func Part1(records [][2]Span) {
 	sum := 0
 	for _, r := range records {
-		if r[0].Overlap(r[1]) {
+		if r[0].Overlap(r[1]) || r[1].Overlap(r[0]) {
 			log.Printf("overlap found: %#v\n", r)
 			sum++
 		}
