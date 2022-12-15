@@ -28,6 +28,23 @@ func LoadRecords(fn string) ([]string, error) {
 	return records, nil
 }
 
+func commonCharacters(pairs [2]string) []string {
+	ret := make(map[string]bool)
+	left, right := pairs[0], pairs[1]
+	for _, leftItem := range left {
+		for _, rightItem := range right {
+			if leftItem == rightItem {
+				ret[string(leftItem)] = true
+			}
+		}
+	}
+	dedupe := make([]string, 0)
+	for k := range ret {
+		dedupe = append(dedupe, k)
+	}
+	return dedupe
+}
+
 func main() {
 	var (
 		filename string
@@ -42,6 +59,8 @@ func main() {
 	}
 
 	for _, record := range records {
-		log.Println(splitString(record))
+		split := splitString(record)
+		log.Println(commonCharacters(split))
 	}
+
 }
