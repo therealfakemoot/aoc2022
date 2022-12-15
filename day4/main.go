@@ -15,7 +15,7 @@ type Span struct {
 }
 
 func (s Span) Overlap(other Span) bool {
-	if s.Stop < other.Stop && other.Start < s.Stop {
+	if s.Stop <= other.Stop && other.Start < s.Stop {
 		return true
 	}
 	return false
@@ -50,11 +50,14 @@ func LoadRecords(fn string) ([][2]Span, error) {
 }
 
 func Part1(records [][2]Span) {
-	// sum := 0
-	//for _, r := range records {
-	//}
-	log.Printf("%#+v\n", records)
-
+	sum := 0
+	for _, r := range records {
+		if r[0].Overlap(r[1]) {
+			log.Printf("overlap found: %#v\n", r)
+			sum++
+		}
+	}
+	fmt.Printf("Part 1 sum: %d\n", sum)
 }
 
 func main() {
